@@ -42,10 +42,10 @@ var Seminar = {
   has3LetterDiscountGranted: function() {
     return this.name().length <= 3;
   },
+  discountPercentage: function() {
+    return this.has3LetterDiscountGranted() ? this.DISCOUNT_PERCENTAGE : 0;
+  },
   toString: function() {
     return '[Seminar "' + this.name() + '"]';
   },
-  discountPercentage: function() {
-    return this.has3LetterDiscountGranted() ? this.DISCOUNT_PERCENTAGE : 0;
-  }
 };

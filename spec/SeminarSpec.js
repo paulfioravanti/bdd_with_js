@@ -59,67 +59,103 @@ describe('Seminar', function() {
   })
 
   describe('#grossPrice', function() {
-    var grossPrice;
+    var netPrice = 100, grossPrice;
 
     beforeEach(function() {
-      seminar = SeminarFactory.create({ price: 100 });
-      grossPrice = seminar.grossPrice();
+      seminar = SeminarFactory.create({ price: netPrice });
     });
 
-    it('calculates VAT at a rate of 20% of the net price', function() {
-      expect(grossPrice).toEqual(120);
-    });
-  })
+    describe('when seminar is tax free', function() {
+      beforeEach(function() {
+        spyOn(seminar, 'isTaxFree').and.returnValue(true)
+        grossPrice = seminar.grossPrice();
+      });
 
-  describe('when it is tax free', function() {
-    var grossPrice, netPrice;
-
-    beforeEach(function() {
-      seminar = SeminarFactory.create({ taxFree: true });
-      grossPrice = seminar.grossPrice();
-      netPrice = seminar.netPrice();
+      it('has no tax applied', function() {
+        expect(grossPrice).toEqual(netPrice);
+      });
     });
 
-    it('has no tax applied', function() {
-      expect(seminar).toBeTaxFree();
-    });
+    describe('when seminar is not tax free', function() {
+      var VATIncludedPrice = netPrice * 1.2;
 
-    it('has a gross price that matches the net price', function() {
-      expect(grossPrice).toEqual(netPrice);
+      beforeEach(function() {
+        spyOn(seminar, 'isTaxFree').and.returnValue(false)
+        grossPrice = seminar.grossPrice();
+      });
+
+      it('calculates VAT at a rate of 20% of the net price', function() {
+        expect(grossPrice).toEqual(VATIncludedPrice);
+      });
     });
   });
 
-  describe('with three letters', function() {
-    var discountPercentage;
+  describe('#has3LetterDiscountGranted', function() {
+    describe('when seminar name is three letters or less', function() {
+      beforeEach(function() {
+        seminar = SeminarFactory.create({ name: 'BDD' });
+        discountPercentage = seminar.has3LetterDiscountGranted();
+      });
 
-    beforeEach(function() {
-      seminar = SeminarFactory.create({ name: 'BDD' });
-      discountPercentage = seminar.discountPercentage();
+      it('is granted a 3-letter discount', function() {
+        expect(seminar).toHave3LetterDiscountGranted();
+      });
     });
 
-    it('is granted a 3-letter discount', function() {
-      expect(seminar).toHave3LetterDiscountGranted();
-    });
+    describe('when seminar name is more than three letters', function() {
+      beforeEach(function() {
+        seminar = SeminarFactory.create({ name: 'FRAG' });
+        discountPercentage = seminar.has3LetterDiscountGranted();
+      });
 
-    it('gives a discount of 5%', function() {
-      expect(discountPercentage).toEqual(5);
+      it('does not have a discount', function() {
+        expect(seminar).not.toHave3LetterDiscountGranted();
+      });
     });
   });
 
-  describe('with more than three letters', function() {
-    var discountPercentage;
+  describe('#discountPercentage', function() {
+    var discountPercentage, discount;
 
     beforeEach(function() {
       seminar = SeminarFactory.create();
-      discountPercentage = seminar.discountPercentage();
     });
 
-    it('is not granted a 3-letter discount', function() {
-      expect(seminar).not.toHave3LetterDiscountGranted();
+    describe('when discount granted', function() {
+      beforeEach(function() {
+        discount = 5;
+        spyOn(seminar, 'has3LetterDiscountGranted').and.returnValue(true)
+        discountPercentage = seminar.discountPercentage();
+      });
+
+      it('is 5%', function() {
+        expect(discountPercentage).toEqual(discount);
+      });
     });
 
-    it('does not have a discount', function() {
-      expect(discountPercentage).toEqual(0);
+    describe('when discount not granted', function() {
+      beforeEach(function() {
+        discount = 0;
+        spyOn(seminar, 'has3LetterDiscountGranted').and.returnValue(false)
+        discountPercentage = seminar.discountPercentage();
+      });
+
+      it('does not have a discount', function() {
+        expect(discountPercentage).toEqual(discount);
+      });
+    });
+  });
+
+  describe('#toString', function() {
+    var stringifiedSeminar = '[Seminar "Foo"]', string;
+
+    beforeEach(function() {
+      seminar = SeminarFactory.create({ name: 'Foo' });
+      string = seminar.toString();
+    });
+
+    it('returns a string representation of a seminar', function() {
+      expect(string).toEqual(stringifiedSeminar);
     });
   });
 });
