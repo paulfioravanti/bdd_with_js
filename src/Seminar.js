@@ -2,10 +2,10 @@ var VAT_RATE = 1.2;
 
 var SeminarFactory = {
   create: function(options) {
-    options = typeof options !== 'undefined' ? options : {};
-    var defaults = { name: 'Javascript-Basics', price: 500 };
+    options = options || {};
+    var defaults = { name: 'Javascript-Basics', price: 500, taxFree: false };
     var values = Object.merge(defaults, options);
-    return Seminar.create(values.name, values.price);
+    return Seminar.create(values.name, values.price, values.taxFree);
   }
 };
 
@@ -17,12 +17,13 @@ Object.merge = function(object, options) {
 };
 
 var Seminar = {
-  create: function(name, price) {
-    return Object.create(Seminar).init(name, price);
+  create: function(name, price, taxFree) {
+    return Object.create(Seminar).init(name, price, taxFree);
   },
-  init: function(name, price) {
+  init: function(name, price, taxFree) {
     this._name = name;
     this._price = price;
+    this._taxFree = taxFree;
     return this;
   },
   name: function() {
@@ -32,6 +33,9 @@ var Seminar = {
     return this._price;
   },
   grossPrice: function() {
-    return this.netPrice() * VAT_RATE;
+    return this.netPrice() * (this.isTaxFree() ? 1: VAT_RATE);
+  },
+  isTaxFree: function() {
+    return this._taxFree;
   }
 };

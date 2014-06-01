@@ -10,7 +10,23 @@ describe('Seminar', function() {
   });
 
   it('has a gross price that adds 20% VAT to the net price', function() {
-    var seminar = SeminarFactory.create();
-    expect(seminar.grossPrice()).toEqual(600);
+    var seminar = SeminarFactory.create({ price: 100 });
+    expect(seminar.grossPrice()).toEqual(120);
+  });
+
+  describe('when it is tax free', function() {
+    var seminar;
+
+    beforeEach(function() {
+      seminar = SeminarFactory.create({ taxFree: true });
+    });
+
+    it('has no tax applied', function() {
+      expect(seminar).toBeTaxFree();
+    });
+
+    it('has a gross price that matches the net price', function() {
+      expect(seminar.grossPrice()).toEqual(seminar.netPrice());
+    });
   });
 });
