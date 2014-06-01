@@ -31,7 +31,7 @@ var Seminar = {
     return this._name;
   },
   netPrice: function() {
-    return this._price;
+    return this._price - this.discount();
   },
   isTaxFree: function() {
     return this._taxFree;
@@ -48,4 +48,7 @@ var Seminar = {
   toString: function() {
     return '[Seminar "' + this.name() + '"]';
   },
+  discount: function() {
+    return this.discountPercentage() / 100 * this._price;
+  }
 };

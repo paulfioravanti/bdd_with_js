@@ -33,15 +33,30 @@ describe('Seminar', function() {
   });
 
   describe('#netPrice', function() {
-    var netPrice = 500, fetchedNetPrice;
+    var price = 500, netPrice, discount;
 
     beforeEach(function() {
-      seminar = SeminarFactory.create({ price: netPrice });
+      seminar = SeminarFactory.create({ price: price });
+      spyOn(seminar, 'discount').and.returnValue(discount);
       fetchedNetPrice = seminar.netPrice();
     });
 
-    it('returns the net price of the seminar', function() {
-      expect(fetchedNetPrice).toEqual(netPrice);
+    describe('when discount applied', function() {
+      discount = 10;
+      netPrice = price - discount;
+
+      it('returns the discounted net price of the seminar', function() {
+        expect(fetchedNetPrice).toEqual(netPrice);
+      });
+    });
+
+    describe('when no discount applied', function() {
+      discount = 0;
+      netPrice = price;
+
+      it('returns the non-discounted net price of the seminar', function() {
+        expect(fetchedNetPrice).toEqual(netPrice);
+      });
     });
   })
 
@@ -59,10 +74,11 @@ describe('Seminar', function() {
   })
 
   describe('#grossPrice', function() {
-    var netPrice = 100, grossPrice;
+    var price = 100, netPrice;
 
     beforeEach(function() {
-      seminar = SeminarFactory.create({ price: netPrice });
+      seminar = SeminarFactory.create({ price: price });
+      spyOn(seminar, 'netPrice').and.returnValue(price)
     });
 
     describe('when seminar is tax free', function() {
@@ -72,12 +88,12 @@ describe('Seminar', function() {
       });
 
       it('has no tax applied', function() {
-        expect(grossPrice).toEqual(netPrice);
+        expect(grossPrice).toEqual(price);
       });
     });
 
     describe('when seminar is not tax free', function() {
-      var VATIncludedPrice = netPrice * 1.2;
+      var VATIncludedPrice = price * 1.2;
 
       beforeEach(function() {
         spyOn(seminar, 'isTaxFree').and.returnValue(false)
@@ -145,6 +161,45 @@ describe('Seminar', function() {
       });
     });
   });
+
+  describe('#discount', function() {
+    var price = 200, discountAmount, discount;
+
+    beforeEach(function() {
+      seminar = SeminarFactory.create({ price: price });
+    });
+
+    describe('when discount granted', function() {
+      var discountPercentage = 5;
+
+      beforeEach(function() {
+        discount = 10;
+        spyOn(seminar, 'discountPercentage').and.
+          returnValue(discountPercentage);
+        spyOn(seminar, 'netPrice').and.returnValue(price);
+        discountAmount = seminar.discount();
+      });
+
+      it('is 5% of the price', function() {
+        expect(discountAmount).toEqual(discount);
+      });
+    });
+
+    describe('when discount not granted', function() {
+      var discountPercentage = 0;
+
+      beforeEach(function() {
+        discount = 0;
+        spyOn(seminar, 'discountPercentage').and.returnValue(discountPercentage);
+        spyOn(seminar, 'netPrice').and.returnValue(price);
+        discountAmount = seminar.discount();
+      });
+
+      it('is 0', function() {
+        expect(discountAmount).toEqual(discount);
+      });
+    });
+  })
 
   describe('#toString', function() {
     var stringifiedSeminar = '[Seminar "Foo"]', string;
