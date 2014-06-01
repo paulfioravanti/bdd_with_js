@@ -1,5 +1,12 @@
 var VAT_RATE = 1.2;
 
+Object.merge = function(object, options) {
+  for (var property in options) {
+    object[property] = options[property];
+  }
+  return object;
+};
+
 var SeminarFactory = {
   create: function(options) {
     options = options || {};
@@ -9,14 +16,8 @@ var SeminarFactory = {
   }
 };
 
-Object.merge = function(object, options) {
-  for (var property in options) {
-    object[property] = options[property];
-  }
-  return object;
-};
-
 var Seminar = {
+  DISCOUNT_PERCENTAGE: 5,
   create: function(name, price, taxFree) {
     return Object.create(Seminar).init(name, price, taxFree);
   },
@@ -32,16 +33,19 @@ var Seminar = {
   netPrice: function() {
     return this._price;
   },
-  grossPrice: function() {
-    return this.netPrice() * (this.isTaxFree() ? 1: VAT_RATE);
-  },
   isTaxFree: function() {
     return this._taxFree;
+  },
+  grossPrice: function() {
+    return this.netPrice() * (this.isTaxFree() ? 1: VAT_RATE);
   },
   has3LetterDiscountGranted: function() {
     return this.name().length <= 3;
   },
   toString: function() {
     return '[Seminar "' + this.name() + '"]';
+  },
+  discountPercentage: function() {
+    return this.has3LetterDiscountGranted() ? this.DISCOUNT_PERCENTAGE : 0;
   }
 };

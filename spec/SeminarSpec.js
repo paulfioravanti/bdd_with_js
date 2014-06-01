@@ -1,7 +1,7 @@
 describe('Seminar', function() {
   var seminar;
 
-  describe('attributes', function() {
+  describe('messages', function() {
     beforeEach(function() {
       seminar = SeminarFactory.create();
     });
@@ -18,6 +18,45 @@ describe('Seminar', function() {
       expect(seminar).toRespondTo('grossPrice');
     });
   });
+
+  describe('#name', function() {
+    var name = 'Foo', fetchedName;
+
+    beforeEach(function() {
+      seminar = SeminarFactory.create({ name: name });
+      fetchedName = seminar.name();
+    });
+
+    it('returns the name of the seminar', function() {
+      expect(fetchedName).toEqual(name);
+    });
+  });
+
+  describe('#netPrice', function() {
+    var netPrice = 500, fetchedNetPrice;
+
+    beforeEach(function() {
+      seminar = SeminarFactory.create({ price: netPrice });
+      fetchedNetPrice = seminar.netPrice();
+    });
+
+    it('returns the net price of the seminar', function() {
+      expect(fetchedNetPrice).toEqual(netPrice);
+    });
+  })
+
+  describe('#isTaxFree', function() {
+    var taxFree = true, fetchedTaxFree;
+
+    beforeEach(function() {
+      seminar = SeminarFactory.create({ taxFree: taxFree });
+      fetchedTaxFree = seminar.isTaxFree();
+    });
+
+    it('indicates the tax free status of the seminar', function() {
+      expect(fetchedTaxFree).toEqual(taxFree);
+    });
+  })
 
   describe('#grossPrice', function() {
     var grossPrice;
