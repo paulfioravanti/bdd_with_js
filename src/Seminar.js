@@ -37,5 +37,11 @@ var Seminar = {
   },
   isTaxFree: function() {
     return this._taxFree;
+  },
+  has3LetterDiscountGranted: function() {
+    return this.name().length <= 3;
+  },
+  toString: function() {
+    return '[Seminar "' + this.name() + '"]';
   }
 };

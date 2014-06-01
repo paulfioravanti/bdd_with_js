@@ -29,4 +29,28 @@ describe('Seminar', function() {
       expect(seminar.grossPrice()).toEqual(seminar.netPrice());
     });
   });
+
+  describe('with three letters', function() {
+    var seminar;
+
+    beforeEach(function() {
+      seminar = SeminarFactory.create({ name: 'BDD' });
+    });
+
+    it('is granted a 3-letter discount', function() {
+      expect(seminar).toHave3LetterDiscountGranted();
+    });
+  });
+
+  describe('with more than three letters', function() {
+    var seminar;
+
+    beforeEach(function() {
+      seminar = SeminarFactory.create();
+    });
+
+    it('is not granted a 3-letter discount', function() {
+      expect(seminar).not.toHave3LetterDiscountGranted();
+    });
+  });
 });
