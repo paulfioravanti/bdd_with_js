@@ -1,5 +1,15 @@
 beforeEach(function() {
   jasmine.addMatchers({
+    toRespondTo: function() {
+      return {
+        compare: function(actual, expected) {
+          return {
+            pass: actual[expected] && typeof(actual[expected]) == "function",
+            message: "Expected " + actual + " to respond to '" + expected + "'"
+          }
+        }
+      }
+    },
     toBeTaxFree: function() {
       return {
         compare: function(actual, expected) {
