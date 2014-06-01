@@ -5,6 +5,7 @@ This is my code sandbox for working through [Behaviour Driven Development with J
 - Change project to use the [Jasmine Ruby gem](https://github.com/pivotal/jasmine-gem)
 - Enable [Bower](https://github.com/bower/bower) on the project to allow easy installation for external libraries
 - Swap out manually created factories for [Rosie](https://github.com/bkeepers/rosie) using Bower
+- Coffeescript everything
 
 **Social**
 
