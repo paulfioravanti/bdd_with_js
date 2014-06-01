@@ -13,16 +13,32 @@ describe('Seminar', function() {
     it('has a net price', function() {
       expect(seminar).toRespondTo('netPrice');
     });
+
+    it('has a gross price', function() {
+      expect(seminar).toRespondTo('grossPrice');
+    });
   });
 
-  it('has a gross price that adds 20% VAT to the net price', function() {
-    var seminar = SeminarFactory.create({ price: 100 });
-    expect(seminar.grossPrice()).toEqual(120);
-  });
+  describe('#grossPrice', function() {
+    var grossPrice;
+
+    beforeEach(function() {
+      seminar = SeminarFactory.create({ price: 100 });
+      grossPrice = seminar.grossPrice();
+    });
+
+    it('calculates VAT at a rate of 20% of the net price', function() {
+      expect(grossPrice).toEqual(120);
+    });
+  })
 
   describe('when it is tax free', function() {
+    var grossPrice, netPrice;
+
     beforeEach(function() {
       seminar = SeminarFactory.create({ taxFree: true });
+      grossPrice = seminar.grossPrice();
+      netPrice = seminar.netPrice();
     });
 
     it('has no tax applied', function() {
@@ -30,13 +46,16 @@ describe('Seminar', function() {
     });
 
     it('has a gross price that matches the net price', function() {
-      expect(seminar.grossPrice()).toEqual(seminar.netPrice());
+      expect(grossPrice).toEqual(netPrice);
     });
   });
 
   describe('with three letters', function() {
+    var discountPercentage;
+
     beforeEach(function() {
       seminar = SeminarFactory.create({ name: 'BDD' });
+      discountPercentage = seminar.discountPercentage();
     });
 
     it('is granted a 3-letter discount', function() {
@@ -44,13 +63,16 @@ describe('Seminar', function() {
     });
 
     it('gives a discount of 5%', function() {
-      expect(seminar.discountPercentage()).toEqual(5);
+      expect(discountPercentage).toEqual(5);
     });
   });
 
   describe('with more than three letters', function() {
+    var discountPercentage;
+
     beforeEach(function() {
       seminar = SeminarFactory.create();
+      discountPercentage = seminar.discountPercentage();
     });
 
     it('is not granted a 3-letter discount', function() {
@@ -58,7 +80,7 @@ describe('Seminar', function() {
     });
 
     it('does not have a discount', function() {
-      expect(seminar.discountPercentage()).toEqual(0);
+      expect(discountPercentage).toEqual(0);
     });
   });
 });
