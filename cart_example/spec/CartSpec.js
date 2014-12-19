@@ -27,6 +27,13 @@ describe('Cart', function() {
             cart.add(product);
             expect(cart.doesContain(anotherProduct)).toBeFalsy();
         });
+
+        it('deducts the product from stock', function() {
+            var product = { name: "SuperTV" };
+            spyOn(Stock, 'removeProduct')
+            cart.add(product);
+            expect(Stock.removeProduct).toHaveBeenCalledWith("SuperTV");
+        });
     });
 
     describe('#grossPriceSum', function() {
