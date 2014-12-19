@@ -10,12 +10,12 @@ $ unzip jasmine/dist/jasmine-standalone-2.{x}.zip -d my_project/
 ```
 
 This will create a new standalone Jasmine project with example code.
-If it's not needed for reference, then remove it:
+If the example code is not needed for reference, remove it:
 
 ```
 $ cd my_project
 $ rm spec/*.* src/*.*
-$ vim SpecRunner.html # replace references to sample code in src/ and spec/ with your own
+$ vim SpecRunner.html # replace references to sample code in src/ and spec/
 ```
 
 **Personal To-Do List**:
